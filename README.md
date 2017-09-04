@@ -1,5 +1,8 @@
 # HQNetworking
-使用YYModel+AFNetwork实现的业务层结合的网络层
+
+> 使用YYModel+AFNetwork实现的业务层结合的网络层
+
+
 特点
 ===
 -  `一一对应`:每一个网络请求都是一个对象
@@ -7,6 +10,10 @@
 -  `规范代码`:所有请求配置必须重写父类方法
 -  `依赖隔离`:与具体请求核心方法隔离
 
+安装
+===
+    pod 'HQNetworking', '~> 1.0.0'
+    
 示例
 ===
 
@@ -76,8 +83,50 @@
     [api start];
 
 ```
-##### 4.更多方法请参考HQBaseAPI.h中的头文件.有很详细的注释
+##### 4.更多方法请参考HQBaseAPI.h中的头文件
+```objc
+///设置请求流程中额外处理
+- (void)setAopDelegate:(id <HQAOPDelegate> __nonnull)aopDelegate;
+- (id <HQAOPDelegate> _Nullable)aopDelegate;
 
-安装
-===
-    pod 'HQNetworking', '~> 1.0.0'
+///baseURL
+- (NSString * __nonnull)baseURL;
+
+///请求路径
+- (NSString * __nonnull)requestURL;
+
+///请求方式 默认:HQRequestMethodGET
+- (HQRequestMethod)requestMethod;
+
+///请求的序列化格式 默认:HQRequestSerializerTypeJSON
+- (HQRequestSerializerType)requestSerializerType;
+
+///响应的序列化格式 默认:HQResponseSerializerTypeJSON
+- (HQResponseSerializerType)responseSerializerType;
+
+///请求的参数: 优先使用子类的requestParams,否则将子类属性(@property)转为NSDictionary
+- (NSDictionary * __nullable)requestParams;
+
+///请求头信息
+- (NSDictionary * __nullable)HTTPHeaderFields;
+
+///额外的请求头信息(父类持续继承)
+- (NSDictionary * __nullable)extraHTTPHeaderFields NS_REQUIRES_SUPER;
+```
+
+#### AOP
+> 使用HQAOPDelegate,可以很好的控制流程,如错误码处理,自定义数据解析等
+```objc
+///将要完成成功响应
+- (void)api:(HQBaseAPI *)api willSuccCompleteResponse:(id)responseObject error:(NSError **)error;
+
+///将要完成失败响应
+- (void)api:(HQBaseAPI *)api willFailCompleteResponse:(id)responseObject error:(NSError **)error;
+
+///自定义处理响应结果
+- (id)api:(HQBaseAPI *)api resultForResponse:(id)responseObject error:(NSError **)error;
+
+```
+
+    
+
